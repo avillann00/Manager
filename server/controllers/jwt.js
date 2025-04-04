@@ -7,7 +7,6 @@ const generateToken = (user) => {
 
 const authenticateToken = (req, res, next) => {
   const token = req.cookies.token || req.headers.authorization?.split(' ')[1]
-  console.log(token)
   if(!token){
     return res.status(403).json({ message: 'Unauthorized' })
   }

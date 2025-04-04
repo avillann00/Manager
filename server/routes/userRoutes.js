@@ -1,10 +1,12 @@
 const express = require('express')
-const { getAllUsers, loginUser, registerUser, logoutUser } = require('../controllers/userController')
+const { getAllUsers, loginUser, registerUser, logoutUser, getCurrentUser } = require('../controllers/userController')
 const { authenticateToken } = require('../controllers/jwt')
 
 const router = express.Router()
 
 router.get('/all', authenticateToken, getAllUsers)
+
+router.get('/current', authenticateToken, getCurrentUser)
 
 router.post('/login', loginUser)
 

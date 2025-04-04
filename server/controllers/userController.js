@@ -54,4 +54,15 @@ const logoutUser = async (req, res) => {
   res.json({ message: 'Logged out successfully' })
 }
 
-module.exports = { getAllUsers, loginUser, registerUser, logoutUser }
+const getCurrentUser = async (req, res) => {
+  const user = await User.findById(req.user.id)
+
+  if(!user){
+    return res.status(404).json({ message: 'User not found' })
+  }
+  
+  console.log('username: ', user.username)
+  res.json({ user: user.username })
+}
+
+module.exports = { getAllUsers, loginUser, registerUser, logoutUser, getCurrentUser }

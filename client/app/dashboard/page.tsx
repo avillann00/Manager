@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
 interface Document{
   // _id: string
@@ -14,6 +14,24 @@ export default function Dashboard(){
   const [username, setUsername] = useState('')
   const [tasks, setTasks] = useState<Document[]>([])
   const [notes, setNotes] = useState<Document[]>([])
+
+  const router = useRouter()
+  
+  useEffect(() => {
+    const getUser = async () => {
+      try{
+        const response = await axios.get('http://localhost:5000/api/user/current', { withCredentials: true })
+        setUsername(response.data.user)
+      }
+      catch(error){
+        console.log('error: ', error)
+        alert('Not authorized')
+        router.push('/login')
+      }
+    }
+
+    getUser()
+  }, [router])
 
   const mappedTasks = tasks?.map((task) => (
     <li 
@@ -81,6 +99,12 @@ export default function Dashboard(){
 
   }
 
+  const handleLogout = async () => {
+    await axios.post('http://localhost:5000/api/user/logout', { withCredentials: true })
+    alert('Logged out')
+    router.push('/login')
+  }
+
   return (
     <div className=' bg-slate-100 h-full w-full flex flex-col items-center gap-8 p-10'>
       <div className='flex justify-between items-center w-full px-10 py-15'>
@@ -96,8 +120,8 @@ export default function Dashboard(){
       <div className='flex flex-col items-center gap-4 border-[5px] border-black rounded-lg w-[400px] min-h-[400px]'>
         <h3 className='text-2xl'>Tasks</h3>
         <div className='flex gap-4'>
-          <button className='bg-slate-200 rounded-lg py-2 px-4 hover:bg-slate-500' onClick={handleTasks}>View all tasks</button>
-          <button className='bg-slate-200 rounded-lg py-2 px-4 hover:bg-slate-500' onClick={handleAddTask}>Add task</button>
+          <button className='bg-slate-200 rounded-lg py-2 px-4 hover:bg-slate-300' onClick={handleTasks}>View all tasks</button>
+          <button className='bg-slate-200 rounded-lg py-2 px-4 hover:bg-slate-300' onClick={handleAddTask}>Add task</button>
         </div>
         <ul className='border border-black rounded-lg bg-blue-100 p-4 w-[300px]'>
           {mappedTasks}
@@ -107,13 +131,14 @@ export default function Dashboard(){
       <div className='flex flex-col items-center gap-4 border-[5px] border-black rounded-lg w-[400px] min-h-[400px]'>
         <h3 className='text-2xl'>Notes</h3>
         <div className='flex gap-4'>
-          <button className='bg-slate-200 rounded-lg py-2 px-4 hover:bg-slate-500' onClick={handleNotes}>View all notes</button>
-          <button className='bg-slate-200 rounded-lg py-2 px-4 hover:bg-slate-500' onClick={handleAddNote}>Add note</button>
+          <button className='bg-slate-200 rounded-lg py-2 px-4 hover:bg-slate-300' onClick={handleNotes}>View all notes</button>
+          <button className='bg-slate-200 rounded-lg py-2 px-4 hover:bg-slate-300' onClick={handleAddNote}>Add note</button>
         </div>
         <ul className='border border-black rounded-lg bg-blue-100 p-4 w-[300px]'>
           {mappedNotes}
         </ul>
       </div>
+      <button onClick={handleLogout} className='text-2xl border border-black rounded-lg p-2 hover:bg-slate-300'>Logout</button>
     </div>
   )
 }
