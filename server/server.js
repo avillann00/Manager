@@ -14,6 +14,13 @@ app.use(cors({
     credentials: true
 }))
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(express.static('public'))
+
+const cookieParser = require('cookie-parser')
+app.use(cookieParser())
+
 const userRouter = require('./routes/userRoutes')
 app.use('/api/user', userRouter)
 
